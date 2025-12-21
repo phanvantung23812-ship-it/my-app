@@ -1,0 +1,23 @@
+
+
+
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 👇 这是我们定义的表结构
+model Todo {
+  //id        String   @id @default(cuid())  // 自动生成的唯一 ID
+  id        Int      @id @default(autoincrement())
+  content   String                           // 任务内容
+  completed Boolean  @default(false)         // 是否完成，默认 false
+  createdAt DateTime @default(now())         // 创建时间
+}
+
