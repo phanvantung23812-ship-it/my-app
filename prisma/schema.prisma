@@ -8,8 +8,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // 👈 这里的名字改了，用 Vercel 默认给的连接池地址
+  directUrl = env("POSTGRES_URL_NON_POOLING") // 👈 新增这一行，用于数据库迁移时的直连地址
 }
 
 // 👇 这是我们定义的表结构
