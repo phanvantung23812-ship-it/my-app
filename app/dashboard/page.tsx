@@ -67,7 +67,7 @@ export default async function DashboardPage() {
 
       {/* 📋 2. 任务列表区域 */}
       <div className="space-y-3">
-        {todos.map((todo) => (
+        {todos.map((todo: any) => (
           <div
             key={todo.id}
             className={`p-4 border rounded shadow-sm flex justify-between items-center bg-white transition-all ${
