@@ -17,78 +17,82 @@ export default function Chat() {
   }, [messages]);
 
   return (
-    // 1. 全局深色背景 (Gemini 的标志性黑灰)
-    <div className="flex flex-col h-screen w-full bg-[#131314] text-gray-100">
+    // 1. 全局极致深黑背景
+    <div className="flex flex-col h-screen w-full bg-[#0a0a0a] text-gray-100 font-sans">
       
-      {/* 2. 中间内容区 */}
-      <div className="flex-1 overflow-y-auto">
-        
-        {/* === 核心逻辑：判断有没有消息 === */}
-        {messages.length === 0 ? (
-          // A. 如果没消息：显示“欢迎屏幕” (模仿 Gemini 的 Start Screen)
-          <div className="flex flex-col items-center justify-center h-full space-y-4">
-            <h1 className="text-5xl font-semibold bg-gradient-to-r from-blue-500 to-red-500 bg-clip-text text-transparent">
-              Hello, Human
-            </h1>
-            <p className="text-gray-500 text-lg">How can I help you today?</p>
-          </div>
-        ) : (
-          // B. 如果有消息：显示“聊天记录”
-          <div className="w-full max-w-3xl mx-auto p-4 space-y-6 pt-10 pb-24">
-            {messages.map(m => (
-              <div key={m.id} className="flex flex-col gap-2">
-                {/* 名字 */}
-                <div className={`font-semibold text-sm ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
-                  {m.role === 'user' ? 'You' : 'Gemini'}
+      {/* 2. 聊天区域 */}
+      <div className="flex-1 overflow-y-auto px-4 py-6">
+        <div className="max-w-3xl mx-auto space-y-8">
+          
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-[50vh] opacity-50">
+               <div className="text-2xl font-medium">How can I help you today?</div>
+            </div>
+          )}
+
+          {messages.map(m => (
+            <div key={m.id} className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              
+              {/* === 用户样式 (极简灰气泡) === */}
+              {m.role === 'user' ? (
+                <div className="max-w-[85%] bg-[#2f2f2f] text-white px-5 py-3 rounded-3xl rounded-tr-sm text-[15px] leading-relaxed">
+                  {m.content}
                 </div>
+              ) : (
                 
-                {/* 气泡/内容 */}
-                <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div 
-                    className={`max-w-[85%] rounded-2xl px-5 py-3 ${
-                      m.role === 'user' 
-                        ? 'bg-[#282A2C] text-white rounded-br-none' // 用户：深灰气泡
-                        : 'bg-transparent text-gray-100 pl-0'       // AI：透明背景，纯文字
-                    }`}
-                  >
-                     <div className="prose prose-invert max-w-none">
-                        <ReactMarkdown>{m.content}</ReactMarkdown>
-                     </div>
+              /* === AI 样式 (图标 + 纯文字) === */
+                <div className="flex gap-4 max-w-full md:max-w-[90%]">
+                  {/* AI 的图标 (蓝色闪烁星星) */}
+                  <div className="flex-shrink-0 w-8 h-8 flex items-start pt-1">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="url(#blue-gradient)" className="w-6 h-6 animate-pulse">
+                        <defs>
+                          <linearGradient id="blue-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#4b90ff" />
+                            <stop offset="100%" stopColor="#4b90ff" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M12 2C12 2 12.8 9.6 15.2 12C12.8 14.4 12 22 12 22C12 22 11.2 14.4 8.8 12C11.2 9.6 12 2 12 2Z" />
+                        <path d="M18 14C18 14 18.4 16.4 19.2 17.2C18.4 18 18 20.4 18 20.4C18 20.4 17.6 18 16.8 17.2C17.6 16.4 18 14 18 14Z" opacity="0.6"/>
+                     </svg>
+                  </div>
+                  
+                  {/* AI 的文字 (无气泡，纯净 Markdown) */}
+                  <div className="prose prose-invert prose-neutral max-w-none text-gray-200 leading-7">
+                    <ReactMarkdown>{m.content}</ReactMarkdown>
                   </div>
                 </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-      </div>
-
-      {/* 3. 底部输入框 (Gemini 的悬浮胶囊风格) */}
-      <div className="p-4 bg-[#131314]">
-        <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto relative">
-          {/* 输入框本体：深灰背景 + 极大圆角 (rounded-full) */}
-          <input
-            className="w-full bg-[#1E1F20] text-gray-100 rounded-full py-4 px-6 pr-14 border border-gray-700 focus:border-gray-500 focus:outline-none focus:ring-0 shadow-lg transition-colors"
-            value={input}
-            placeholder="Ask Gemini..."
-            onChange={handleInputChange}
-          />
-          {/* 发送按钮图标 */}
-          <button 
-            type="submit" 
-            disabled={!input}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-white text-black rounded-full hover:bg-gray-200 disabled:bg-gray-600 disabled:text-gray-400 transition-all"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-              <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
-            </svg>
-          </button>
-        </form>
-        <div className="text-center text-xs text-gray-500 mt-2">
-           Gemini may display inaccurate info, including about people, so double-check its responses.
+              )}
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
         </div>
       </div>
-      
+
+      {/* 3. 输入框区域 (悬浮胶囊) */}
+      <div className="p-4 bg-[#0a0a0a]">
+        <div className="max-w-3xl mx-auto">
+          <form onSubmit={handleSubmit} className="relative">
+            <input
+              className="w-full bg-[#1e1e1e] text-gray-100 rounded-full py-3.5 px-6 pr-12 border border-transparent focus:border-gray-600 focus:bg-[#2a2a2a] focus:outline-none transition-all placeholder-gray-500"
+              value={input}
+              placeholder="Message Gemini..."
+              onChange={handleInputChange}
+            />
+            <button 
+              type="submit" 
+              disabled={!input}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white text-black rounded-full hover:bg-gray-200 disabled:opacity-0 transition-opacity"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
+              </svg>
+            </button>
+          </form>
+          <div className="text-center mt-2 text-xs text-gray-600">
+            Gemini can make mistakes, so double-check it.
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
