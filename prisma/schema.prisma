@@ -1,23 +1,16 @@
-// 1. 生成器配置
 generator client {
   provider = "prisma-client-js"
 }
 
-// 2. 数据库连接配置 (Vercel Postgres 专用)
 datasource db {
   provider  = "postgresql"
-  // 使用连接池地址 (Vercel 自动生成的环境变量)
   url       = env("POSTGRES_PRISMA_URL")
-  // 使用直连地址 (用于迁移)
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-// 👇 这是我们定义的表结构
 model Todo {
-  //id        String   @id @default(cuid())  // 自动生成的唯一 ID
   id        Int      @id @default(autoincrement())
-  content   String                           // 任务内容
-  completed Boolean  @default(false)         // 是否完成，默认 false
-  createdAt DateTime @default(now())         // 创建时间
+  content   String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
-
