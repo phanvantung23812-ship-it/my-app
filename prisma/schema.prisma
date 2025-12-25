@@ -1,16 +1,15 @@
-
-
-
-// prisma/schema.prisma
-
+// 1. 生成器配置
 generator client {
   provider = "prisma-client-js"
 }
 
+// 2. 数据库连接配置 (Vercel Postgres 专用)
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // 👈 这里的名字改了，用 Vercel 默认给的连接池地址
-  directUrl = env("POSTGRES_URL_NON_POOLING") // 👈 新增这一行，用于数据库迁移时的直连地址
+  // 使用连接池地址 (Vercel 自动生成的环境变量)
+  url       = env("POSTGRES_PRISMA_URL")
+  // 使用直连地址 (用于迁移)
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 // 👇 这是我们定义的表结构
